@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.AuthenticationToken;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
 import com.example.demo.repository.TokenRepository;
 
 @Service
@@ -18,11 +18,11 @@ public class Authentication_service {
 		tokenRepository.save(authenticationToken);
 	}
 
-	public AuthenticationToken getToken(User user) {
+	public AuthenticationToken getToken(Users user) {
 		return tokenRepository.findByUser(user);
 	}
 
-	public User getUser(String tokens) {
+	public Users getUser(String tokens) {
 		System.out.println("token from db ...");
 		AuthenticationToken authenticationToken = tokenRepository.findByToken(tokens);
 		System.out.println("user with token : " + authenticationToken.toString());

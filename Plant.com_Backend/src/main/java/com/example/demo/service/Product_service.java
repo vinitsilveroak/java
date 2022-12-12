@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +49,8 @@ public class Product_service {
 			image = new Product_image();
 			image.setProduct(as);
 
-			image.setImageurl(productDto.getImage_url().get(i));
+			// image.set(productDto.getImage_url().get(i));
+			image.setImage(productDto.getImage_url().get(i));
 			System.out.println(i);
 
 			image_Repo.save(image);
@@ -68,8 +70,17 @@ public class Product_service {
 	}
 
 	// get product by id
-	public Product getproduct(int id) {
-		return product_Repo.findById(id);
+	public ProductDto getproduct(int id) {
+		ProductDto productDto = productEntityToDto(product_Repo.findById(id));
+		List<Product_image> findByProduct = image_Repo.findByProduct(id);
+
+		List<String> list = new ArrayList<>();
+		for (int t = 0; t < findByProduct.size(); t++) {
+
+			list.add(findByProduct.get(t).getImage());
+		}
+		productDto.setImage_url(list);
+		return productDto;
 	}
 
 	public ProductlisstDto productEntityToListDto(Product product) {
@@ -91,6 +102,9 @@ public class Product_service {
 		productDto.setProduct_price(product.getProduct_price());
 		productDto.setProduct_name(product.getProduct_name());
 		productDto.setImage_thumbnail(product.getImage_thumbnail());
+		productDto.setCare(product.getCare());
+		productDto.setLight(product.getLight());
+		productDto.setSize(product.getSize());
 		return productDto;
 	}
 

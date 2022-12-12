@@ -31,7 +31,7 @@ public class Cart {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private User user;
+	private Users user;
 
 	public Integer getQuantity() {
 		return quantity;
@@ -49,11 +49,11 @@ public class Cart {
 		this.product = product;
 	}
 
-	public User getUser() {
+	public Users getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 
@@ -75,7 +75,7 @@ public class Cart {
 	
 	
 
-	public Cart(Integer id, Integer quality, Date createdDate, Product product, User user) {
+	public Cart(Integer id, Integer quality, Date createdDate, Product product, Users user) {
 		super();
 		this.id = id;
 		this.quantity = quality;

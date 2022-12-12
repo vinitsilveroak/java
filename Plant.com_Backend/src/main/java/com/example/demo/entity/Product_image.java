@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -43,7 +41,7 @@ public class Product_image {
 		return image;
 	}
 
-	public void setImageurl(String image) {
+	public void setImage(String image) {
 		this.image = image;
 	}
 

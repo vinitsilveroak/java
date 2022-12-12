@@ -108,6 +108,4 @@ public class Product {
 
 	}
 
-	// JWT LEARN TOMORROW
-
 }

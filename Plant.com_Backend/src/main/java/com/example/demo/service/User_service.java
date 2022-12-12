@@ -2,20 +2,24 @@ package com.example.demo.service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SignDto;
-import com.example.demo.dto.SignInReponseDto;
 import com.example.demo.dto.SignupDto;
 import com.example.demo.entity.AuthenticationToken;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
+//import com.example.demo.entity.User;
 import com.example.demo.exception.CustomException;
 import com.example.demo.repository.UserRepo;
+import com.sample.auth.jwt.util.TokenManager;
 
 @Service
 public class User_service {
@@ -25,6 +29,9 @@ public class User_service {
 
 	@Autowired
 	Authentication_service authenticationService;
+
+	@Autowired
+	private TokenManager tokenManager;
 
 	public String signUp(SignupDto signupDto) {
 		// check if user is already present
@@ -43,7 +50,7 @@ public class User_service {
 			e.printStackTrace();
 		}
 
-		User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(),
+		Users user = new Users(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(),
 				encryptedpassword);
 
 		userRepository.save(user);
@@ -69,10 +76,10 @@ public class User_service {
 		return hash;
 	}
 
-	public com.example.demo.dto.SignInReponseDto signIn(SignDto signInDto) {
+	public com.example.demo.dto.SignInReponseDto signIn(SignDto loginDto) {
 		// find user by email
 
-		User user = userRepository.findByEmail(signInDto.getEmail());
+		com.example.demo.entity.Users user = userRepository.findByEmail(loginDto.getEmail());
 
 		if (Objects.isNull(user)) {
 			throw new com.example.demo.exception.AuthenticationFailException("user is not valid");
@@ -81,29 +88,20 @@ public class User_service {
 		// hash the password
 
 		try {
-			if (!user.getPasswoprd().equals(hashPassword(signInDto.getPassword()))) {
+			if (!user.getPasswoprd().equals(hashPassword(loginDto.getPassword()))) {
 				throw new com.example.demo.exception.AuthenticationFailException("wrong password");
 			}
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 
-		// compare the password in DB
+		final UserDetails userDetails = new User(loginDto.getEmail(), loginDto.getPassword(), new ArrayList<>());
 
-		// if password match
+		System.out.println("hii");
+		@SuppressWarnings("unused")
+		final String jwtToken = tokenManager.generateJwtToken(userDetails);
+		return null;
 
-		AuthenticationToken token = authenticationService.getToken(user);
-
-		// retrive the token
-
-		if (Objects.isNull(token)) {
-			throw new CustomException("token is not present");
-		}
-
-		return new SignInReponseDto
-				("sucess", token.getToken());
-
-		// return response
 	}
 
 }

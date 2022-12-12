@@ -28,9 +28,9 @@ public class AuthenticationToken {
 	    @Column(name = "created_date")
 	    private Date createdDate;
 
-	    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+	    @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
 	    @JoinColumn(nullable = false, name = "user_id")
-	    private User user;
+	    private Users user;
 
 	    public String getToken() {
 	        return token;
@@ -48,11 +48,11 @@ public class AuthenticationToken {
 	        this.createdDate = createdDate;
 	    }
 
-	    public User getUser() {
+	    public Users getUser() {
 	        return user;
 	    }
 
-	    public void setUser(User user) {
+	    public void setUser(Users user) {
 	        this.user = user;
 	    }
 
@@ -64,7 +64,7 @@ public class AuthenticationToken {
 	        this.id = id;
 	    }
 
-	    public AuthenticationToken(User user) {
+	    public AuthenticationToken(Users user) {
 	        this.user = user;
 	        this.createdDate = new Date();
 	        this.token = UUID.randomUUID().toString();

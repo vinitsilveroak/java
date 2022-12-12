@@ -26,14 +26,14 @@ public class Product_Controller {
 	@Autowired
 	Product_service product_service;
 
-	//add product
-	@PostMapping("addproduct")
+	// add product
+	@PostMapping("/addproduct")
 	public ResponseEntity<ApiResponse> createproduct(@RequestBody ProductDto productDto) {
 		product_service.addplant(productDto);
 		return new ResponseEntity<>(new ApiResponse(true, "Product has been added"), HttpStatus.CREATED);
 	}
 
-	//get product list
+	// get product list
 	@GetMapping("getlist")
 	public List<ProductlisstDto> getproductList(ProductlisstDto productlisstDto) {
 		List<Product> allProduct = product_service.getAllProduct();
@@ -44,12 +44,21 @@ public class Product_Controller {
 		return productList;
 	}
 
-	//get product by id
+	// get product by id
 	@GetMapping("getproduct")
 	public ProductDto getProduct(@RequestParam int id) {
-		Product product = product_service.getproduct(id);
-		ProductDto product1 = product_service.productEntityToDto(product);
-		return product1;
+		return product_service.getproduct(id);
+	}
+	
+	/*
+	 * @GetMapping("getproduct/{id}") public ProductDto
+	 * getProduct(@PathVariable("id") int id) { return
+	 * product_service.getproduct(id); }
+	 */
+	
+	@PostMapping("/")
+	public ResponseEntity<String> createproduct() {
+		return new ResponseEntity<>( HttpStatus.OK);
 	}
 
 }

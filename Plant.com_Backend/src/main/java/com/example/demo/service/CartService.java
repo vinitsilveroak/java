@@ -11,7 +11,7 @@ import com.example.demo.dto.AddToCartDto;
 import com.example.demo.dto.GetDto;
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.Product;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
 import com.example.demo.exception.productNotExistExce;
 import com.example.demo.repository.Cart_repo;
 
@@ -25,7 +25,7 @@ public class CartService {
 	@Autowired
 	Cart_repo cart_repRepo;
 
-	public void addtocart(AddToCartDto addToCart, User user) throws productNotExistExce {
+	public void addtocart(AddToCartDto addToCart, Users user) throws productNotExistExce {
 
 		Product product = product_service.findById(addToCart.getProduct_id());
 
@@ -38,7 +38,7 @@ public class CartService {
 		cart_repRepo.save(cart);
 	}
 
-	public GetDto listcartItem(User authentication) {
+	public GetDto listcartItem(Users authentication) {
 		List<Cart> carts = cart_repRepo.findAllByUserOrderByCreatedDateDesc(authentication);
 		List<cartItemDto> dtos = new ArrayList<>();
 
