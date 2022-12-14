@@ -8,30 +8,29 @@ import java.util.Objects;
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SignDto;
+import com.example.demo.dto.SignInReponseDto;
 import com.example.demo.dto.SignupDto;
 import com.example.demo.entity.AuthenticationToken;
-import com.example.demo.entity.Users;
-//import com.example.demo.entity.User;
+import com.example.demo.entity.User;
 import com.example.demo.exception.CustomException;
 import com.example.demo.repository.UserRepo;
-import com.sample.auth.jwt.util.TokenManager;
+import com.example.demo.util.TokenManager;
 
 @Service
 public class User_service {
 
 	@Autowired
 	UserRepo userRepository;
+	
+	@Autowired
+	TokenManager manager;
 
 	@Autowired
 	Authentication_service authenticationService;
-
-	@Autowired
-	private TokenManager tokenManager;
 
 	public String signUp(SignupDto signupDto) {
 		// check if user is already present
@@ -50,7 +49,7 @@ public class User_service {
 			e.printStackTrace();
 		}
 
-		Users user = new Users(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(),
+		User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(),
 				encryptedpassword);
 
 		userRepository.save(user);
@@ -76,32 +75,39 @@ public class User_service {
 		return hash;
 	}
 
-//	public com.example.demo.dto.SignInReponseDto signIn(SignDto loginDto) {
-//		// find user by email
-//
-//		com.example.demo.entity.Users user = userRepository.findByEmail(loginDto.getEmail());
-//
-//		if (Objects.isNull(user)) {
-//			throw new com.example.demo.exception.AuthenticationFailException("user is not valid");
-//		}
-//
-//		// hash the password
-//
-//		try {
-//			if (!user.getPasswoprd().equals(hashPassword(loginDto.getPassword()))) {
-//				throw new com.example.demo.exception.AuthenticationFailException("wrong password");
-//			}
-//		} catch (NoSuchAlgorithmException e) {
-//			e.printStackTrace();
-//		}
-//
-//		final UserDetails userDetails = new User(loginDto.getEmail(), loginDto.getPassword(), new ArrayList<>());
-//
-//		System.out.println("hii");
-//		@SuppressWarnings("unused")
-//		final String jwtToken = tokenManager.generateJwtToken(userDetails);
-//		return null;
-//
-//	}
+	public String signIn(SignDto signInDto) {
+		// find user by email
+
+		User user = userRepository.findByEmail(signInDto.getEmail());
+
+		if (Objects.isNull(user)) {
+			throw new com.example.demo.exception.AuthenticationFailException("user is not valid");
+		}
+
+		// hash the password
+
+		try {
+			if (!user.getPasswoprd().equals(hashPassword(signInDto.getPassword()))) {
+				throw new com.example.demo.exception.AuthenticationFailException("wrong password");
+			}
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		// compare the password in DB
+
+		// if password match
+
+		AuthenticationToken token = authenticationService.getToken(user);
+
+		// retrive the token
+
+		final UserDetails userDetails = new org.springframework.security.core.userdetails.User(signInDto.getEmail(), signInDto.getPassword(), new ArrayList<>());
+
+		final String jwtToken = manager.generateJwtToken(userDetails);
+		return jwtToken;
+
+		// return response
+	}
 
 }
